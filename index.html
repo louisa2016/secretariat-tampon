@@ -7,7 +7,6 @@
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-
     <style>
         :root {
             --blue-france: #000091;
@@ -184,18 +183,15 @@
 </head>
 
 <body>
-
     <header>
         <h2 style="color: var(--blue-france); margin:0;">Endossaire</h2>
         <div id="file-info" style="font-weight: bold;">Aucun fichier chargé</div>
     </header>
-
     <div class="main-layout">
         <div class="sidebar sidebar-left">
             <h3>1. Fichier PDF</h3>
             <div id="drop-zone">📁 Charger un document</div>
             <input type="file" id="file-input" accept="application/pdf" style="display:none">
-
             <h3>2. Bibliothèque</h3>
             <div id="selector">
                 <div class="stamp-card active" data-stamp="principal-stamp" onclick="selectStamp(this)">
@@ -216,26 +212,35 @@
                 </div>
             </div>
         </div>
-
         <div class="workspace">
             <div
                 style="margin-bottom: 15px; display: flex; gap: 15px; align-items: center; background: white; padding: 8px 20px; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                 <button id="prev-page" style="width: 40px; margin: 0; padding: 5px;">&lt;</button>
                 <span style="font-weight: bold; color: #333; display: flex; align-items: center; gap: 8px;">
                     Page
-                    <input type="number" id="current-page-input" value="1" min="1"
+                    <input autocomplete="off" type="number" id="current-page-input" value="1" min="1"
                         style="width: 55px; text-align: center; border: 1px solid var(--blue-france); border-radius: 4px; padding: 3px;">
                     / <span id="total-pages">1</span>
                 </span>
                 <button id="next-page" style="width: 40px; margin: 0; padding: 5px;">&gt;</button>
+                <div style="width: 1px; height: 25px; background: #ddd; margin: 0 10px;"></div>
+                <span style="font-weight: bold; color: #333;">Zoom :</span>
+                <select autocomplete="off" id="zoom-select"
+                    style="padding: 5px; border-radius: 4px; border: 1px solid var(--blue-france);">
+                    <option value="0.5">50%</option>
+                    <option value="0.75">75%</option>
+                    <option value="1" selected>100%</option>
+                    <option value="1.25">125%</option>
+                    <option value="1.5">150%</option>
+                    <option value="2">200%</option>
+                </select>
             </div>
-
-            <div class="canvas-wrapper">
+            <div class="canvas-wrapper" id="scroll-container"
+                style="max-width: 100%; max-height: 80vh; overflow: auto;">
                 <button id="delete-control">✕</button>
                 <canvas id="pdf-canvas"></canvas>
             </div>
         </div>
-
         <div class="sidebar sidebar-right">
             <h3>3. Statistiques</h3>
             <div class="info-box" style="border-left: 4px solid var(--blue-france);">
@@ -245,13 +250,11 @@
                     🗑️ Vider cette page
                 </button>
             </div>
-
             <h3>4. Réglages auto</h3>
             <div class="info-box">
                 <label><b>Taille par défaut (px) :</b></label>
                 <input type="number" id="pref-size" value="100"
                     style="width: 100%; margin: 8px 0 15px 0; padding: 5px;">
-
                 <label><b>Position d'insertion :</b></label>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin: 10px 0;">
                     <button class="pos-btn" data-v="top" data-h="left">↖</button>
@@ -267,118 +270,178 @@
                 <button id="btn-save-prefs" style="background: #666; font-size: 0.8em; padding: 8px;">💾
                     Mémoriser</button>
             </div>
-
             <div style="margin-top: auto; padding-top: 20px;">
                 <h3>5. Export</h3>
                 <button id="btn-export" disabled style="height: 60px; font-size: 1.1em;">TÉLÉCHARGER LE PDF</button>
             </div>
         </div>
     </div>
-
     <div style="display:none" id="svg-library">
-        <svg width="250" height="250" viewBox="0 0 250 250" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="principal-stamp">
+        <svg width="250" height="250" viewBox="0 0 250 250" version="1.1" xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink" id="principal-stamp">
             <g transform="rotate(5 125 125)">
-                <circle class="Rang" cx="125" cy="125" r="123.5" fill="none" stroke="#000091" stroke-width="3" layer="0"></circle>
-                <circle class="Rang" cx="125" cy="125" r="117.75" fill="none" stroke="#000091" stroke-width="2" layer="1"></circle>
-                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none"font-weight="bold" transform="rotate(0, 125, 125)" textLength="314.1814" layer="2">
-                    <defs><path id="kkZTKNKV7Cl82" d="M 125 125 m -98.3, 0 a 98.3,98.3 0 1,1 196.6,0 a 98.3,98.3 0 1,1 -196.6,0"></path></defs>
-                    <textPath href="#kkZTKNKV7Cl82" xlink:href="#kkZTKNKV7Cl82" textLength="314.1814">Collège Katherine Johnson&nbsp;</textPath>
+                <circle class="Rang" cx="125" cy="125" r="123.5" fill="none" stroke="#000091" stroke-width="3"
+                    layer="0"></circle>
+                <circle class="Rang" cx="125" cy="125" r="117.75" fill="none" stroke="#000091" stroke-width="2"
+                    layer="1"></circle>
+                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none"
+                    font-weight="bold" transform="rotate(0, 125, 125)" textLength="314.1814" layer="2">
+                    <defs>
+                        <path id="kkZTKNKV7Cl82"
+                            d="M 125 125 m -98.3, 0 a 98.3,98.3 0 1,1 196.6,0 a 98.3,98.3 0 1,1 -196.6,0"></path>
+                    </defs>
+                    <textPath href="#kkZTKNKV7Cl82" xlink:href="#kkZTKNKV7Cl82" textLength="314.1814">Collège Katherine
+                        Johnson&nbsp;</textPath>
                 </text>
-                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none" font-weight="bold" transform="rotate(-5 125 125)" textLength="332.48252" layer="4">
-                    <defs> <path id="hQVwZLlstvF54" d="M 125 125 m -112, 0 a 112,112 0 1,0 224,0 a 112,112 0 1,0 -224,0"></path></defs>
-                    <textPath href="#hQVwZLlstvF54" xlink:href="#hQVwZLlstvF54" textLength="332.48252">Bd du Bhosphore 13015 MARSEILLE</textPath>
+                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none"
+                    font-weight="bold" transform="rotate(-5 125 125)" textLength="332.48252" layer="4">
+                    <defs>
+                        <path id="hQVwZLlstvF54" d="M 125 125 m -112, 0 a 112,112 0 1,0 224,0 a 112,112 0 1,0 -224,0">
+                        </path>
+                    </defs>
+                    <textPath href="#hQVwZLlstvF54" xlink:href="#hQVwZLlstvF54" textLength="332.48252">Bd du Bhosphore
+                        13015 MARSEILLE</textPath>
                 </text>
-                <circle class="Rang" cx="125" cy="125" r="91.5" fill="none" stroke="#000091" stroke-width="2" layer="5"></circle>
-                <text x="125" y="112.5" layer="6" fill="#000091" stroke="none" font-size="22" font-family="Marianne" font-weight="bold" transform="rotate(0 125 112.5)">
+                <circle class="Rang" cx="125" cy="125" r="91.5" fill="none" stroke="#000091" stroke-width="2" layer="5">
+                </circle>
+                <text x="125" y="112.5" layer="6" fill="#000091" stroke="none" font-size="22" font-family="Marianne"
+                    font-weight="bold" transform="rotate(0 125 112.5)">
                     <tspan dy="6.75" text-anchor="middle">LE PRINCIPAL</tspan>
                 </text>
-                <text x="125" y="142.5" layer="7" fill="#000091" stroke="none" font-size="22" font-family="Marianne" transform="rotate(0 125 142.5)">
+                <text x="125" y="142.5" layer="7" fill="#000091" stroke="none" font-size="22" font-family="Marianne"
+                    transform="rotate(0 125 142.5)">
                     <tspan dy="6.75" text-anchor="middle">C. CALIPPE</tspan>
                 </text>
             </g>
         </svg>
-
-        <svg width="250" height="250" viewBox="0 0 250 250" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="adjoint-stamp">
+        <svg width="250" height="250" viewBox="0 0 250 250" version="1.1" xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink" id="adjoint-stamp">
             <g transform="rotate(5 125 125)">
-                <circle class="Rang" cx="125" cy="125" r="123.5" fill="none" stroke="#000091" stroke-width="3" layer="0"></circle>
-                <circle class="Rang" cx="125" cy="125" r="117.75" fill="none" stroke="#000091" stroke-width="2" layer="1"></circle>
-                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none" font-weight="bold" transform="rotate(0, 125, 125)" textLength="314.1814" layer="2">
-                    <defs><path id="kkZTKNKV7Cl82" d="M 125 125 m -98.3, 0 a 98.3,98.3 0 1,1 196.6,0 a 98.3,98.3 0 1,1 -196.6,0"></path></defs>
-                    <textPath href="#kkZTKNKV7Cl82" xlink:href="#kkZTKNKV7Cl82" textLength="314.1814">Collège Katherine Johnson&nbsp;</textPath>
+                <circle class="Rang" cx="125" cy="125" r="123.5" fill="none" stroke="#000091" stroke-width="3"
+                    layer="0"></circle>
+                <circle class="Rang" cx="125" cy="125" r="117.75" fill="none" stroke="#000091" stroke-width="2"
+                    layer="1"></circle>
+                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none"
+                    font-weight="bold" transform="rotate(0, 125, 125)" textLength="314.1814" layer="2">
+                    <defs>
+                        <path id="kkZTKNKV7Cl82"
+                            d="M 125 125 m -98.3, 0 a 98.3,98.3 0 1,1 196.6,0 a 98.3,98.3 0 1,1 -196.6,0"></path>
+                    </defs>
+                    <textPath href="#kkZTKNKV7Cl82" xlink:href="#kkZTKNKV7Cl82" textLength="314.1814">Collège Katherine
+                        Johnson&nbsp;</textPath>
                 </text>
-                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none" font-weight="bold" transform="rotate(-5 125 125)" textLength="332.48252" layer="4">
-                    <defs><path id="hQVwZLlstvF54" d="M 125 125 m -112, 0 a 112,112 0 1,0 224,0 a 112,112 0 1,0 -224,0"></path></defs>
-                    <textPath href="#hQVwZLlstvF54" xlink:href="#hQVwZLlstvF54" textLength="332.48252">Bd du Bhosphore 13015 MARSEILLE</textPath>
+                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none"
+                    font-weight="bold" transform="rotate(-5 125 125)" textLength="332.48252" layer="4">
+                    <defs>
+                        <path id="hQVwZLlstvF54" d="M 125 125 m -112, 0 a 112,112 0 1,0 224,0 a 112,112 0 1,0 -224,0">
+                        </path>
+                    </defs>
+                    <textPath href="#hQVwZLlstvF54" xlink:href="#hQVwZLlstvF54" textLength="332.48252">Bd du Bhosphore
+                        13015 MARSEILLE</textPath>
                 </text>
-                <circle class="Rang" cx="125" cy="125" r="91.5" fill="none" stroke="#000091" stroke-width="2" layer="5"></circle>
-                <text x="125" y="112.5" layer="6" fill="#000091" stroke="none" font-size="22" font-family="Marianne" font-weight="bold" transform="rotate(0 125 112.5)">
+                <circle class="Rang" cx="125" cy="125" r="91.5" fill="none" stroke="#000091" stroke-width="2" layer="5">
+                </circle>
+                <text x="125" y="112.5" layer="6" fill="#000091" stroke="none" font-size="22" font-family="Marianne"
+                    font-weight="bold" transform="rotate(0 125 112.5)">
                     <tspan dy="6.75" text-anchor="middle">LE PRINCIPAL</tspan>
                 </text>
-                <text x="125" y="132.5" layer="8" fill="#000091" stroke="none" font-size="22" font-family="Marianne" font-weight="bold" transform="rotate(0 125 112.5)">
+                <text x="125" y="132.5" layer="8" fill="#000091" stroke="none" font-size="22" font-family="Marianne"
+                    font-weight="bold" transform="rotate(0 125 112.5)">
                     <tspan dy="6.75" text-anchor="middle">ADJOINT</tspan>
                 </text>
-                <text x="125" y="164.5" layer="7" fill="#000091" stroke="none" font-size="22" font-family="Marianne" ransform="rotate(0 125 142.5)">
+                <text x="125" y="164.5" layer="7" fill="#000091" stroke="none" font-size="22" font-family="Marianne"
+                    transform="rotate(0 125 142.5)">
                     <tspan dy="6.75" text-anchor="middle">C. AUBES</tspan>
                 </text>
             </g>
         </svg>
-        <svg width="250" height="250" viewBox="0 0 250 250" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="secretariat-stamp">
+        <svg width="250" height="250" viewBox="0 0 250 250" version="1.1" xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink" id="secretariat-stamp">
             <g transform="rotate(5 125 125)">
-                <circle class="Rang" cx="125" cy="125" r="123.5" fill="none" stroke="#000091" stroke-width="3" layer="0"></circle>
-                <circle class="Rang" cx="125" cy="125" r="117.75" fill="none" stroke="#000091" stroke-width="2" layer="1"></circle>
-                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none" font-weight="bold" transform="rotate(0, 125, 125)" textLength="314.1814" layer="2">
-                    <defs><path id="kkZTKNKV7Cl82" d="M 125 125 m -98.3, 0 a 98.3,98.3 0 1,1 196.6,0 a 98.3,98.3 0 1,1 -196.6,0"></path></defs>
-                    <textPath href="#kkZTKNKV7Cl82" xlink:href="#kkZTKNKV7Cl82" textLength="314.1814">Collège Katherine Johnson&nbsp;</textPath>
+                <circle class="Rang" cx="125" cy="125" r="123.5" fill="none" stroke="#000091" stroke-width="3"
+                    layer="0"></circle>
+                <circle class="Rang" cx="125" cy="125" r="117.75" fill="none" stroke="#000091" stroke-width="2"
+                    layer="1"></circle>
+                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none"
+                    font-weight="bold" transform="rotate(0, 125, 125)" textLength="314.1814" layer="2">
+                    <defs>
+                        <path id="kkZTKNKV7Cl82"
+                            d="M 125 125 m -98.3, 0 a 98.3,98.3 0 1,1 196.6,0 a 98.3,98.3 0 1,1 -196.6,0"></path>
+                    </defs>
+                    <textPath href="#kkZTKNKV7Cl82" xlink:href="#kkZTKNKV7Cl82" textLength="314.1814">Collège Katherine
+                        Johnson&nbsp;</textPath>
                 </text>
-                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none"font-weight="bold" transform="rotate(-5 125 125)" textLength="332.48252" layer="4">
-                    <defs><path id="hQVwZLlstvF54" d="M 125 125 m -112, 0 a 112,112 0 1,0 224,0 a 112,112 0 1,0 -224,0"></path></defs>
-                    <textPath href="#hQVwZLlstvF54" xlink:href="#hQVwZLlstvF54" textLength="332.48252">Bd du Bhosphore 13015 MARSEILLE</textPath>
+                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none"
+                    font-weight="bold" transform="rotate(-5 125 125)" textLength="332.48252" layer="4">
+                    <defs>
+                        <path id="hQVwZLlstvF54" d="M 125 125 m -112, 0 a 112,112 0 1,0 224,0 a 112,112 0 1,0 -224,0">
+                        </path>
+                    </defs>
+                    <textPath href="#hQVwZLlstvF54" xlink:href="#hQVwZLlstvF54" textLength="332.48252">Bd du Bhosphore
+                        13015 MARSEILLE</textPath>
                 </text>
-                <circle class="Rang" cx="125" cy="125" r="91.5" fill="none" stroke="#000091" stroke-width="2" layer="5"></circle>
-                <text x="125" y="112.5" layer="6" fill="#000091" stroke="none" font-size="22" font-family="Marianne" font-weight="bold" transform="rotate(0 125 112.5)">
+                <circle class="Rang" cx="125" cy="125" r="91.5" fill="none" stroke="#000091" stroke-width="2" layer="5">
+                </circle>
+                <text x="125" y="112.5" layer="6" fill="#000091" stroke="none" font-size="22" font-family="Marianne"
+                    font-weight="bold" transform="rotate(0 125 112.5)">
                     <tspan dy="6.75" text-anchor="middle">SECRÉTARIAT</tspan>
                 </text>
-                <text x="125" y="142.5" layer="7" fill="#000091" stroke="none" font-size="22" font-family="Marianne" transform="rotate(0 125 142.5)">
+                <text x="125" y="142.5" layer="7" fill="#000091" stroke="none" font-size="22" font-family="Marianne"
+                    transform="rotate(0 125 142.5)">
                     <tspan dy="6.75" text-anchor="middle">L. ZERRAD</tspan>
                 </text>
             </g>
         </svg>
-        <svg width="250" height="250" viewBox="0 0 250 250" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="gestion-stamp">
+        <svg width="250" height="250" viewBox="0 0 250 250" version="1.1" xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink" id="gestion-stamp">
             <g transform="rotate(5 125 125)">
-                <circle class="Rang" cx="125" cy="125" r="123.5" fill="none" stroke="#000091" stroke-width="3" layer="0"></circle>
-                <circle class="Rang" cx="125" cy="125" r="117.75" fill="none" stroke="#000091" stroke-width="2" layer="1"></circle>
-                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none"font-weight="bold" transform="rotate(0, 125, 125)" textLength="314.1814" layer="2">
-                    <defs><path id="kkZTKNKV7Cl82" d="M 125 125 m -98.3, 0 a 98.3,98.3 0 1,1 196.6,0 a 98.3,98.3 0 1,1 -196.6,0"></path></defs>
-                    <textPath href="#kkZTKNKV7Cl82" xlink:href="#kkZTKNKV7Cl82" textLength="314.1814">Collège Katherine Johnson&nbsp;</textPath>
+                <circle class="Rang" cx="125" cy="125" r="123.5" fill="none" stroke="#000091" stroke-width="3"
+                    layer="0"></circle>
+                <circle class="Rang" cx="125" cy="125" r="117.75" fill="none" stroke="#000091" stroke-width="2"
+                    layer="1"></circle>
+                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none"
+                    font-weight="bold" transform="rotate(0, 125, 125)" textLength="314.1814" layer="2">
+                    <defs>
+                        <path id="kkZTKNKV7Cl82"
+                            d="M 125 125 m -98.3, 0 a 98.3,98.3 0 1,1 196.6,0 a 98.3,98.3 0 1,1 -196.6,0"></path>
+                    </defs>
+                    <textPath href="#kkZTKNKV7Cl82" xlink:href="#kkZTKNKV7Cl82" textLength="314.1814">Collège Katherine
+                        Johnson&nbsp;</textPath>
                 </text>
-                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none" font-weight="bold" transform="rotate(-5 125 125)" textLength="332.48252" layer="4">
-                    <defs><path id="hQVwZLlstvF54" d="M 125 125 m -112, 0 a 112,112 0 1,0 224,0 a 112,112 0 1,0 -224,0"></path></defs>
-                    <textPath href="#hQVwZLlstvF54" xlink:href="#hQVwZLlstvF54" textLength="332.48252">Bd du Bhosphore 13015 MARSEILLE</textPath>
+                <text font-size="18" font-style="normal" font-family="Marianne" fill="#000091" stroke="none"
+                    font-weight="bold" transform="rotate(-5 125 125)" textLength="332.48252" layer="4">
+                    <defs>
+                        <path id="hQVwZLlstvF54" d="M 125 125 m -112, 0 a 112,112 0 1,0 224,0 a 112,112 0 1,0 -224,0">
+                        </path>
+                    </defs>
+                    <textPath href="#hQVwZLlstvF54" xlink:href="#hQVwZLlstvF54" textLength="332.48252">Bd du Bhosphore
+                        13015 MARSEILLE</textPath>
                 </text>
-                <circle class="Rang" cx="125" cy="125" r="91.5" fill="none" stroke="#000091" stroke-width="2" layer="5"></circle>
-                <text x="125" y="112.5" layer="6" fill="#000091" stroke="none" font-size="22" font-family="Marianne" font-weight="bold" transform="rotate(0 125 112.5)">
+                <circle class="Rang" cx="125" cy="125" r="91.5" fill="none" stroke="#000091" stroke-width="2" layer="5">
+                </circle>
+                <text x="125" y="112.5" layer="6" fill="#000091" stroke="none" font-size="22" font-family="Marianne"
+                    font-weight="bold" transform="rotate(0 125 112.5)">
                     <tspan dy="6.75" text-anchor="middle">SERVICE</tspan>
                 </text>
-                <text x="125" y="142.5" layer="7" fill="#000091" stroke="none" font-size="22" font-family="Marianne" transform="rotate(0 125 142.5)">
+                <text x="125" y="142.5" layer="7" fill="#000091" stroke="none" font-size="22" font-family="Marianne"
+                    transform="rotate(0 125 142.5)">
                     <tspan dy="6.75" text-anchor="middle">GESTION</tspan>
                 </text>
             </g>
         </svg>
     </div>
-
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
         const { PDFDocument } = PDFLib;
         let fabricCanvas, currentPdfBytes, pdfDocJS;
         let currentPageNum = 1, totalPages = 1;
         let selectedV = 'bottom', selectedH = 'right';
+        let currentZoom = 1;
         let originalFileName = "document";
-
         window.onload = () => {
             fabricCanvas = new fabric.Canvas('pdf-canvas');
             setupPreviews();
             loadPrefs();
-
             // Gestion des positions
             document.querySelectorAll('.pos-btn').forEach(btn => {
                 btn.onclick = (e) => {
@@ -388,31 +451,38 @@
                     selectedH = e.target.dataset.h;
                 };
             });
-
             // Corbeille flottante
             const delControl = document.getElementById('delete-control');
-            fabricCanvas.on('selection:created', updateDelPos);
-            fabricCanvas.on('selection:updated', updateDelPos);
-            fabricCanvas.on('moving', updateDelPos);
+            const scrollContainer = document.getElementById('scroll-container');  // Ajout: référence au conteneur scroll
+            fabricCanvas.on('selection:created', () => updateDelPos(delControl, scrollContainer));
+            fabricCanvas.on('selection:updated', () => updateDelPos(delControl, scrollContainer));
+            fabricCanvas.on('moving', () => updateDelPos(delControl, scrollContainer));
             fabricCanvas.on('selection:cleared', () => delControl.style.display = 'none');
-            delControl.onclick = removeSelected;
-
-            function updateDelPos() {
+            // Ajout: listener pour clic sur le bouton delete (utilise addEventListener pour cohérence)
+            delControl.addEventListener('click', removeSelected);
+            // Ajout: listener clavier pour supprimer (Delete ou Backspace) quand un objet est sélectionné
+            window.addEventListener('keydown', (e) => {
+                if ((e.key === 'Delete' || e.key === 'Backspace') && fabricCanvas.getActiveObject()) {
+                    removeSelected();
+                }
+            });
+            function updateDelPos(delControl, scrollContainer) {  // Modif: fonction avec params, calcule en pixels visibles
                 const obj = fabricCanvas.getActiveObject();
                 if (!obj) return;
                 const rect = obj.getBoundingRect();
+                const pixelTop = rect.top * currentZoom;
+                const pixelLeft = rect.left * currentZoom;
+                const pixelWidth = rect.width * currentZoom;
                 delControl.style.display = 'block';
-                delControl.style.top = (rect.top - 10) + 'px';
-                delControl.style.left = (rect.left + rect.width - 15) + 'px';
+                delControl.style.top = (pixelTop - scrollContainer.scrollTop - 10) + 'px';
+                delControl.style.left = (pixelLeft - scrollContainer.scrollLeft + pixelWidth - 15) + 'px';
             }
-
             // Navigation
             const pInput = document.getElementById('current-page-input');
             pInput.onchange = () => {
                 let v = Math.max(1, Math.min(totalPages, parseInt(pInput.value) || 1));
                 pInput.value = v; renderPage(v);
             };
-
             document.getElementById('btn-clear-page').onclick = () => {
                 if (confirm(`Vider la page ${currentPageNum} ?`)) {
                     fabricCanvas.getObjects().filter(o => o.pageRef === currentPageNum).forEach(o => fabricCanvas.remove(o));
@@ -420,21 +490,35 @@
                     updateStats();
                 }
             };
+            document.getElementById('zoom-select').onchange = (e) => {
+                applyZoom(parseFloat(e.target.value));
+            };
         };
-
+        function applyZoom(zoomLevel) {
+            currentZoom = zoomLevel;
+            // On définit le zoom par rapport au coin supérieur gauche
+            fabricCanvas.setZoom(zoomLevel);
+            // On ajuste la taille du conteneur de dessin pour que les scrollbars apparaissent
+            fabricCanvas.setWidth(fabricCanvas.backgroundImage.width * zoomLevel);
+            fabricCanvas.setHeight(fabricCanvas.backgroundImage.height * zoomLevel);
+            fabricCanvas.renderAll();
+        }
         async function renderPage(num) {
             currentPageNum = num;
             document.getElementById('current-page-input').value = num;
             const page = await pdfDocJS.getPage(num);
-            const viewport = page.getViewport({ scale: 1.5 });
+            const viewport = page.getViewport({ scale: 1.5 }); // On garde une base haute définition
             const tempCanvas = document.createElement('canvas');
             const context = tempCanvas.getContext('2d');
-            tempCanvas.height = viewport.height; tempCanvas.width = viewport.width;
+            tempCanvas.height = viewport.height;
+            tempCanvas.width = viewport.width;
             await page.render({ canvasContext: context, viewport }).promise;
-
             fabric.Image.fromURL(tempCanvas.toDataURL(), (img) => {
-                fabricCanvas.setDimensions({ width: viewport.width, height: viewport.height });
+                // Appliquer le fond
                 fabricCanvas.setBackgroundImage(img, () => {
+                    // Ajuster le canvas à la taille du fond multipliée par le zoom actuel
+                    applyZoom(currentZoom);
+                    // Gérer la visibilité des objets
                     fabricCanvas.getObjects().forEach(o => {
                         if (o !== fabricCanvas.backgroundImage) {
                             o.visible = o.evented = (o.pageRef === currentPageNum);
@@ -445,7 +529,6 @@
                 });
             });
         }
-
         function removeSelected() {
             if (fabricCanvas.getActiveObject()) {
                 fabricCanvas.remove(fabricCanvas.getActiveObject());
@@ -453,12 +536,10 @@
                 updateStats();
             }
         }
-
         function setupPreviews() {
             const ids = ['principal-stamp', 'adjoint-stamp', 'secretariat-stamp', 'gestion-stamp'];
             ids.forEach((id, i) => document.getElementById('p' + (i + 1)).innerHTML = document.getElementById(id).outerHTML);
         }
-
         const fIn = document.getElementById('file-input');
         document.getElementById('drop-zone').onclick = () => fIn.click();
         fIn.onchange = async (e) => {
@@ -468,56 +549,57 @@
             originalFileName = file.name.replace(/\.[^/.]+$/, "");
             // On récupère les données
             const buffer = await file.arrayBuffer();
-
-            // CRUCIAL : On crée une copie pour pdf-lib (export) 
+            // CRUCIAL : On crée une copie pour pdf-lib (export)
             // afin que pdf.js ne "détache" pas le buffer principal
             currentPdfBytes = buffer.slice(0);
-
             document.getElementById('file-info').innerText = file.name;
-
             // On utilise le buffer original pour l'affichage
             pdfDocJS = await pdfjsLib.getDocument({ data: buffer }).promise;
-
             totalPages = pdfDocJS.numPages;
             document.getElementById('total-pages').innerText = totalPages;
             document.getElementById('btn-export').disabled = false;
             renderPage(1);
         };
-
         function selectStamp(el) {
             document.querySelectorAll('.stamp-card').forEach(c => c.classList.remove('active'));
             el.classList.add('active');
             addStamp(el.dataset.stamp);
         }
-
         function addStamp(id) {
             const svgData = new XMLSerializer().serializeToString(document.getElementById(id));
-            const size = parseInt(document.getElementById('pref-size').value) || 100;
+            const size = parseInt(document.getElementById('pref-size').value) || 100;  // Taille logique fixe
+            // Ajout: calcul en coordonnées logiques (non zoomées)
+            const unzoomedW = fabricCanvas.backgroundImage.width;
+            const unzoomedH = fabricCanvas.backgroundImage.height;
+            const logicalPad = 20;  // Padding logique fixe
+            let l, t;
+            if (selectedH === 'left') l = logicalPad;
+            else if (selectedH === 'center') l = (unzoomedW / 2) - (size / 2);
+            else l = unzoomedW - size - logicalPad;
+            if (selectedV === 'top') t = logicalPad;
+            else if (selectedV === 'middle') t = (unzoomedH / 2) - (size / 2);
+            else t = unzoomedH - size - logicalPad;
             fabric.loadSVGFromString(svgData, (objs, opts) => {
                 const s = fabric.util.groupSVGElements(objs, opts);
-                let l, t, pad = 20;
-                if (selectedH === 'left') l = pad;
-                else if (selectedH === 'center') l = (fabricCanvas.width / 2) - (size / 2);
-                else l = fabricCanvas.width - size - pad;
-
-                if (selectedV === 'top') t = pad;
-                else if (selectedV === 'middle') t = (fabricCanvas.height / 2) - (size / 2);
-                else t = fabricCanvas.height - size - pad;
-
-                s.set({ left: l, top: t, stampId: id, pageRef: currentPageNum, cornerColor: '#000091' });
-                s.scaleToWidth(size);
+                s.set({
+                    left: l,
+                    top: t,
+                    stampId: id,
+                    pageRef: currentPageNum,
+                    cornerColor: '#000091',
+                    unzoomedPageWidth: unzoomedW,  // Ajout: stocker pour export précis par page
+                    unzoomedPageHeight: unzoomedH
+                });
+                s.scaleToWidth(size);  // Scale logique fixe
                 fabricCanvas.add(s).setActiveObject(s).renderAll();
                 updateStats();
             });
         }
-
         function updateStats() {
             document.getElementById('stat-count').innerText = fabricCanvas.getObjects().filter(o => o !== fabricCanvas.backgroundImage).length;
         }
-
         document.getElementById('prev-page').onclick = () => { if (currentPageNum > 1) renderPage(currentPageNum - 1); };
         document.getElementById('next-page').onclick = () => { if (currentPageNum < totalPages) renderPage(currentPageNum + 1); };
-
         function loadPrefs() {
             const s = localStorage.getItem('stampSize'), v = localStorage.getItem('stampV'), h = localStorage.getItem('stampH');
             if (s) document.getElementById('pref-size').value = s;
@@ -526,37 +608,37 @@
             const target = document.querySelector(`.pos-btn[data-v="${selectedV}"][data-h="${selectedH}"]`);
             if (target) target.classList.add('selected');
         }
-
         document.getElementById('btn-save-prefs').onclick = () => {
             localStorage.setItem('stampSize', document.getElementById('pref-size').value);
             localStorage.setItem('stampV', selectedV); localStorage.setItem('stampH', selectedH);
             alert("Réglages sauvés !");
         };
-
         document.getElementById('btn-export').onclick = async () => {
             const pdfDoc = await PDFDocument.load(currentPdfBytes.slice(0));
             const pages = pdfDoc.getPages();
             for (const o of fabricCanvas.getObjects()) {
                 if (o === fabricCanvas.backgroundImage) continue;
                 const page = pages[o.pageRef - 1];
+                const { width, height } = page.getSize();
+                // Modif: utilise les dims logiques stockées par tampon (indépendant du zoom et de la page courante)
+                const rx = width / o.unzoomedPageWidth;
+                const ry = height / o.unzoomedPageHeight;
                 const pngBytes = await svgToPng(document.getElementById(o.stampId));
                 const img = await pdfDoc.embedPng(pngBytes);
-                const { width, height } = page.getSize();
-                const rx = width / fabricCanvas.width, ry = height / fabricCanvas.height;
                 page.drawImage(img, {
-                    x: o.left * rx, y: height - (o.top * ry) - (o.getScaledHeight() * ry),
-                    width: o.getScaledWidth() * rx, height: o.getScaledHeight() * ry,
+                    x: o.left * rx,
+                    y: height - (o.top * ry) - (o.getScaledHeight() * ry),
+                    width: o.getScaledWidth() * rx,
+                    height: o.getScaledHeight() * ry,
                     rotate: PDFLib.degrees(-o.angle || 0)
                 });
             }
-
             const pdfDataUri = await pdfDoc.save();
             const link = document.createElement('a');
             link.href = URL.createObjectURL(new Blob([pdfDataUri], { type: "application/pdf" }));
             link.download = `${originalFileName}_endosse.pdf`;
             link.click();
         };
-
         async function svgToPng(svg) {
             return new Promise(res => {
                 const canvas = document.createElement('canvas');
